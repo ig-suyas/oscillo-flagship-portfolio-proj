@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* Mirror of src/lib/tokens.ts */
+@theme {
+  --color-ink: #0d0c0b;
+  --color-graphite: #1b1a18;
+  --color-bone: #ece6da;
+  --color-stone: #8d877c;
+  --color-signal: #ff4a14;
+  --color-volt: #1730ff;
+
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --text-mega: clamp(4.5rem, 17.2vw, 26rem);
+  --text-display: clamp(3.5rem, 13vw, 18rem);
+  --text-title: clamp(2.75rem, 7.5vw, 9rem);
+  --text-lead: clamp(1.05rem, 1.35vw, 1.5rem);
+  --text-micro: clamp(0.75rem, 0.72vw, 0.8rem);
+
+  --spacing-gutter: clamp(16px, 2.6vw, 40px);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+:root {
+  --scene-fg: var(--color-bone);
+  --scene-accent: var(--color-signal);
+  --z-back: 1;
+  --z-canvas: 10;
+  --z-front: 20;
+  --z-header: 30;
+  --z-grain: 40;
+  --z-cursor: 50;
+  --z-loader: 60;
+}
+
+html {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+
+body { overflow-x: clip; }
+
+/* Display face: Archivo at full expansion, black weight, tight tracking */
+.f-display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-stretch: 125%;
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.045em;
+  line-height: 0.8;
+  text-transform: uppercase;
+}
+.f-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+/* Fixed scene layers ("manual pin"): sections stay stacking-context free so the
+   shared canvas can sit between a scene's back and front layers. */
+.scene-layer {
+  position: fixed;
+  inset: 0;
+  height: 100lvh;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform;
+  contain: layout paint;
+}
+.scene-layer[data-on="1"] { visibility: visible; }
+.scene-layer[data-on="1"] .interactive { pointer-events: auto; }
+
+:focus-visible { outline: 2px solid var(--color-signal); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Hero pre-intro state (full mode only; the intro timeline takes over) */
+[data-mode="full"] .hero-letter { transform: translateY(115%); }
+[data-mode="full"] .hero-label > * { opacity: 0; }
+.hero-tall { display: none; }
+@media (max-aspect-ratio: 4/5) {
+  .hero-wide { display: none; }
+  .hero-tall { display: block; }
+}
+@keyframes osc-run { to { transform: translateX(-50%); } }
+
+/* Focus ring stays visible on the signal-orange world */
+.on-signal :focus-visible { outline-color: var(--color-ink); }
